@@ -43,4 +43,32 @@ const userRegistration = async (req, res) => {
   }
 };
 
-module.exports = { userRegistration };
+// user login
+const userLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400).send({ message: "all field are required" });
+    }
+    const findUserByEmail = await User.find({ email }).select("+password");
+    if (!findUserByEmail) {
+      res.status(404).send({ message: "user doesn`t exist" });
+    }
+    const token = jwt.sign(
+      { id: findUserByEmail._id },
+      process.env.jwt_secret,
+      {
+        expiresIn: "7d",
+      }
+    );
+    res.json({
+      msg: "Login successful",
+      token,
+      user: { id: findUserByEmail._id, email },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: error.message });
+  }
+};
+module.exports = { userRegistration, userLogin };
