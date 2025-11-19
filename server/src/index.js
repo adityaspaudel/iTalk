@@ -9,6 +9,9 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
+const swaggerUi = require("swagger-ui-express");
+
+const swaggerFile = require("./swagger-output.json"); // auto-generated file
 
 const userRoute = require("./routes/userRoute");
 
@@ -25,6 +28,9 @@ dbConnect();
 
 // routes
 app.use(userRoute);
+
+// swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // app
 const port = process.env.port;
