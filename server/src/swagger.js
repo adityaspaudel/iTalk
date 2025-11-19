@@ -12,7 +12,7 @@ const doc = {
 
 const outputFile = "./swagger-output.json";
 
-// 👇 All your routes go here (no need for comments inside route files)
+//  All my routes go here (no need for comments inside route files)
 const endpointsFiles = [
   "./src/routes/userRoute.js",
   // "./src/routes/messageRoute.js",
