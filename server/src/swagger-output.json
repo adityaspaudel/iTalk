@@ -5,7 +5,7 @@
     "title": "REST API",
     "description": ""
   },
-  "host": "localhost:8000",
+  "host": "localhost:3000",
   "basePath": "/",
   "schemes": [
     "http"
@@ -76,6 +76,26 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/userSearchByName": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "fullName",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
           "500": {
             "description": "Internal Server Error"
