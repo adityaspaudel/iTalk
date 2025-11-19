@@ -50,7 +50,7 @@ const userLogin = async (req, res) => {
     if (!email || !password) {
       res.status(400).send({ message: "all field are required" });
     }
-    const findUserByEmail = await User.find({ email }).select("+password");
+    const findUserByEmail = await User.findOne({ email }).select("+password");
     if (!findUserByEmail) {
       res.status(404).send({ message: "user doesn`t exist" });
     }
@@ -62,7 +62,7 @@ const userLogin = async (req, res) => {
       }
     );
     res.json({
-      msg: "Login successful",
+      message: "Login successful",
       token,
       user: { id: findUserByEmail._id, email },
     });
