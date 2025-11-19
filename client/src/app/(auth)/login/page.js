@@ -1,5 +1,6 @@
 "use client";
 import { Field, Form, Formik } from "formik";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const UserLogin = () => {
@@ -9,10 +10,9 @@ const UserLogin = () => {
   });
   const [data, setData] = useState({});
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
+  const router = useRouter();
   return (
-    <main>
-      <div>UserLogin</div>
+    <main className="flex min-h-screen min-w-screen bg-amber-200 text-black">
 
       <div>
         <h1>Sign In</h1>
@@ -34,6 +34,7 @@ const UserLogin = () => {
               const parsedData = await response.json();
               setFormData(parsedData);
               console.log("parsedData", parsedData);
+              router.push(`/${parsedData.user.id}`);
             } catch (error) {
               console.error(error);
             } finally {
@@ -42,13 +43,13 @@ const UserLogin = () => {
           }}
         >
           {({ isSubmitting }) => (
-            <Form>
+            <Form className="flex">
               <label htmlFor="email">Email</label>
               <Field name="email" placeholder="jane@acme.com" type="email" />
 
               <label htmlFor="password">password</label>
 
-              <Field name="password" placeholder="password" />
+              <Field name="password" placeholder="password" type="password" />
 
               <button type="submit" disabled={isSubmitting}>
                 Submit
