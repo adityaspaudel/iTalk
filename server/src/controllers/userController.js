@@ -50,7 +50,7 @@ const userLogin = async (req, res) => {
     if (!email || !password) {
       res.status(400).send({ message: "all field are required" });
     }
-    const findUserByEmail = await User.find({ email }).select("+password");
+    const findUserByEmail = await User.findOne({ email }).select("+password");
     if (!findUserByEmail) {
       res.status(404).send({ message: "user doesn`t exist" });
     }
@@ -62,7 +62,7 @@ const userLogin = async (req, res) => {
       }
     );
     res.json({
-      msg: "Login successful",
+      message: "Login successful",
       token,
       user: { id: findUserByEmail._id, email },
     });
@@ -71,4 +71,27 @@ const userLogin = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 };
-module.exports = { userRegistration, userLogin };
+
+const userSearchByName = async (req, res) => {
+  try {
+    const { fullName } = req.query;
+    if (!fullName || fullName.trim() === "") {
+      res.send({ message: "please type something" });
+    }
+
+    const users = await User.find({
+      fullName: { $regex: fullName, $options: "i" },
+    }).select("-password"); // remove password field
+
+    res.status(200).json({
+      results: users.length,
+      users,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+module.exports = { userRegistration, userLogin, userSearchByName };
