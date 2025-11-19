@@ -9,8 +9,9 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
-const swaggerUi = require("swagger-ui-express");
 
+// swagger api setup
+const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("./swagger-output.json"); // auto-generated file
 
 const userRoute = require("./routes/userRoute");
