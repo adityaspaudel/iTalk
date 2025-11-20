@@ -18,6 +18,6 @@ const endpointsFiles = [
   // "./routes/messageRoute.js",
 ];
 
-swaggerAutogen(outputFile, endpointsFiles).then(() => {
+swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
   console.log("📘 Swagger JSON generated automatically!");
 });

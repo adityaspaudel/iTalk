@@ -94,4 +94,10 @@ const userSearchByName = async (req, res) => {
     });
   }
 };
-module.exports = { userRegistration, userLogin, userSearchByName };
+const fetchAllUsers = async (req, res) => {
+  try {
+    const allUsers = await User.find();
+    res.status(200).json(allUsers);
+  } catch (error) {}
+};
+module.exports = { userRegistration, userLogin, userSearchByName,fetchAllUsers };
