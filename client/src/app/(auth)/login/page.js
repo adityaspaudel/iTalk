@@ -12,11 +12,10 @@ const UserLogin = () => {
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const router = useRouter();
   return (
-    <main className="flex min-h-screen min-w-screen bg-amber-200 text-black">
-
+    <main className="flex flex-col h-md w-md bg-gray-200 text-black justify-start items-start p-4">
       <div>
-        <h1>Sign In</h1>
-        {JSON.stringify(formData)}
+        <h1 >Sign In</h1>
+        {/* {JSON.stringify(formData)} */}
         <Formik
           initialValues={formData}
           onSubmit={async (values) => {
@@ -43,7 +42,7 @@ const UserLogin = () => {
           }}
         >
           {({ isSubmitting }) => (
-            <Form className="flex">
+            <Form className="flex flex-col content-start items-start">
               <label htmlFor="email">Email</label>
               <Field name="email" placeholder="jane@acme.com" type="email" />
 
