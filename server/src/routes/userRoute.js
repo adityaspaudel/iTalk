@@ -4,6 +4,7 @@ const {
   userSearchByName,
   fetchAllUsers,
 } = require("../controllers/userController");
+
 const express = require("express");
 const router = express.Router();
 
