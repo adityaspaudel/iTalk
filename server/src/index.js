@@ -15,7 +15,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("./swagger-output.json"); // auto-generated file
 
 const userRoute = require("./routes/userRoute");
-
+const messageRoute = require("./routes/messageRoute");
 // middlewares
 app.use(express.json());
 app.use(cors());
@@ -29,7 +29,7 @@ dbConnect();
 
 // routes
 app.use(userRoute);
-
+app.use(messageRoute);
 // swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
