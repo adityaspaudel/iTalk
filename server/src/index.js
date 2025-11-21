@@ -46,8 +46,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 //  Catch undefined routes
 app.use((req, res) => {
-  console.log("Route not found:", req);
-  res.status(404).json({ message: "Route not found" });
+  console.error("Routing error:", req.originalUrl);
+  res.status(500).json({ message: "Routing error" });
 });
 
 // app

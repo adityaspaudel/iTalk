@@ -39,6 +39,18 @@ const sendMessage = async (req, res) => {
 
 const getMessage = async (req, res) => {
   try {
+    const { sender, receiver } = req.body;
+
+    if (!sender || !receiver) {
+      return res.status(400).send({ message: "All fields are required" });
+    }
+    let chat = await Message.findOne({
+      participants: { $all: [sender, receiver] },
+    });
+    if (!chat) {
+      return res.status(200).json({ message: "no message found", chat });
+    }
+    res.status(200).json({ message: "messages fetched successfully", chat });
   } catch (error) {
     console.error(error);
   }
