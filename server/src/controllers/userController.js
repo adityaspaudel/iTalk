@@ -100,4 +100,65 @@ const fetchAllUsers = async (req, res) => {
     res.status(200).json(allUsers);
   } catch (error) {}
 };
-module.exports = { userRegistration, userLogin, userSearchByName,fetchAllUsers };
+
+const toggleFollowUnfollow = async (req, res) => {
+  try {
+    const { followedBy, followingTo } = req.body;
+
+    // prevent self-follow
+    if (followedBy === followingTo) {
+      return res.status(400).json({ message: "You can't follow yourself" });
+    }
+
+    // validate
+    if (!followedBy || !followingTo) {
+      return res.status(400).json({ message: "User doesn't exist" });
+    }
+
+    // find both users
+    const currentUser = await User.findById(followedBy);
+    const targetUser = await User.findById(followingTo);
+
+    // user existence check
+    if (!currentUser || !targetUser) {
+      return res.status(404).json({ message: "User(s) not found" });
+    }
+
+    // check following status
+    const isFollowing = currentUser.following
+      .map((id) => id.toString())
+      .includes(followingTo.toString());
+
+    if (isFollowing) {
+      // unfollow
+      currentUser.following.pull(followingTo);
+      targetUser.followers.pull(followedBy);
+    } else {
+      // follow
+      currentUser.following.push(followingTo);
+      targetUser.followers.push(followedBy);
+    }
+
+    await currentUser.save();
+    await targetUser.save();
+
+    return res.json({
+      message: isFollowing
+        ? "Unfollowed successfully"
+        : "Followed successfully",
+    });
+  } catch (error) {
+    console.error("Follow/Unfollow error:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
+};
+
+module.exports = {
+  userRegistration,
+  userLogin,
+  userSearchByName,
+  fetchAllUsers,
+  toggleFollowUnfollow,
+};
