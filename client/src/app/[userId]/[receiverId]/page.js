@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 // Connect to backend socket server
 const socket = io("http://localhost:8000");
@@ -10,6 +10,9 @@ const Receiver = () => {
   const { userId, receiverId } = useParams();
   const [message, setMessage] = useState("");
   const [fetchedMessage, setFetchedMessage] = useState([]);
+
+  const messagesEndRef = useRef(null);
+
   const handleChange = (e) => {
     e.preventDefault();
     setMessage(e.target.value);
@@ -37,6 +40,8 @@ const Receiver = () => {
       getMessage();
     } catch (error) {
       console.error;
+    } finally {
+      setMessage("");
     }
   };
 
@@ -51,12 +56,20 @@ const Receiver = () => {
       setFetchedMessage(data.chat?.messages || []);
     } catch (error) {
       console.log(error);
+    } finally {
     }
   }, [userId, receiverId]);
 
   useEffect(() => {
     getMessage();
   }, [getMessage]);
+
+  // messageEndReference
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [fetchedMessage]);
 
   useEffect(() => {
     if (userId) {
@@ -73,30 +86,62 @@ const Receiver = () => {
       socket.off("newMessage");
     };
   }, [userId]);
-  return (
-    <main className="flex flex-col min-h-screen w-screen bg-gray-100 text-black">
-      <div className="flex flex-col justify-between items-center w-full">
-        <div>Receiver</div>
-        <div>Sender</div>
-      </div>
-      <div>
-        {/* <pre>{JSON.stringify(fetchedMessage, 2, 2)}</pre> */}
 
-        <div className="h-80 w-80 bg-amber-200 overflow-scroll">
-          {fetchedMessage?.map((m, v) => (
-            <div key={v}>
-              <div>{m.text}</div>
-              <div>{new Date(m.createdAt).toLocaleString()}</div>
-            </div>
-          ))}
+  return (
+    <main className="flex flex-col min-h-screen w-screen bg-gray-100 text-black p-4">
+      {/* Header */}
+      <div className="w-full flex justify-between items-center bg-white shadow px-4 py-2 rounded-md mb-4">
+        <div className="font-semibold text-gray-800">
+          Receiver: {receiverId}
         </div>
+        <div className="text-gray-600">You: {userId}</div>
       </div>
-      <input
-        value={message}
-        onChange={handleChange}
-        className="border border-gray-500"
-      />
-      <button onClick={handleClick}>send</button>
+      {/* Chat Messages Box */}
+      <div className="h-96 w-full max-w-md mx-auto bg-white shadow-inner rounded-lg p-3 overflow-y-scroll">
+        {fetchedMessage?.map((m, i) => {
+          const isSender = m.sender === userId;
+          return (
+            <div
+              key={i}
+              className={`my-2 flex ${
+                isSender ? "justify-end" : "justify-start"
+              }`}
+            >
+              <div
+                className={`max-w-[70%] p-2 rounded-lg shadow 
+                ${
+                  isSender
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-800"
+                }
+              `}
+              >
+                <div className="text-sm">{m.text}</div>
+                <div className="text-[10px] text-gray-700 mt-1">
+                  {new Date(m.createdAt).toLocaleTimeString()}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={messagesEndRef}></div>
+      </div>
+
+      {/* Input Box */}
+      <div className="flex gap-2 mt-4 max-w-md mx-auto w-full">
+        <input
+          value={message}
+          onChange={handleChange}
+          className="flex-1 px-3 py-2 border border-gray-400 rounded-lg focus:outline-blue-500"
+          placeholder="Type a message..."
+        />
+        <button
+          onClick={handleClick}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Send
+        </button>
+      </div>
     </main>
   );
 };
