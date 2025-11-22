@@ -87,8 +87,8 @@ const UserHome = () => {
   };
 
   return (
-    <main className="flex bg-amber-200 h-screen w-screen text-black">
-      <div>UserHome</div>
+    <main className="flex bg-amber-200 h-screen w-screen text-black justify-center items-center">
+      {/* <div>UserHome</div> */}
       {/* {userId} */}
       {/* {JSON.stringify(allUsers)} */}
       {/* user search  */}
@@ -98,7 +98,7 @@ const UserHome = () => {
           {/* Search Input and Button */}
           <div className="mb-8 flex space-x-2">
             <input
-              className="grow p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+              className="grow px-2 py-1 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
               type="text"
               placeholder="Enter Full Name (sends as 'fullName' query)"
               value={searchTerm}
@@ -110,19 +110,19 @@ const UserHome = () => {
             <button
               onClick={handleSearch}
               disabled={isLoading}
-              className={`rounded-lg px-4 py-3 cursor-pointer transition duration-150 shadow-md ${
+              className={`rounded-sm px-2 py-1 cursor-pointer transition duration-150 shadow-md ${
                 isLoading
                   ? "bg-gray-400"
-                  : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                  : "bg-blue-500 hover:bg-blue-600 text-white"
               }`}
             >
               {isLoading ? "Searching..." : "Search"}
             </button>
           </div>
 
-          <h2 className="text-xl font-semibold text-gray-700 mb-3">
+          {/* <h2 className="text-xl font-semibold text-gray-700 mb-3">
             Backend Response (JSON)
-          </h2>
+          </h2> */}
 
           {/* Display Error Message */}
           {error && (
