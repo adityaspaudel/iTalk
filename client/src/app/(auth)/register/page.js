@@ -1,6 +1,7 @@
 "use client";
 
 import { Field, Form, Formik } from "formik";
+import Link from "next/link";
 import React, { useState } from "react";
 
 const UserRegistration = () => {
@@ -17,8 +18,7 @@ const UserRegistration = () => {
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   return (
-    <main className="bg-blue-300 text-black flex flex-col items-center justify-center">
-      <h1>User Registration</h1>
+    <main className="bg-yellow-200 text-black flex flex-col items-center justify-center h-screen w-screen">
       {/* <div>
         {data && (
           <pre className="break-all">
@@ -27,8 +27,7 @@ const UserRegistration = () => {
         )}
       </div> */}
 
-      <div>
-        <h1>Sign Up</h1>
+      <div className="bg-gray-100 p-4 min-h-64 w-96 rounded-xl ">
         <Formik
           initialValues={formData}
           onSubmit={async (values) => {
@@ -56,30 +55,63 @@ const UserRegistration = () => {
           }}
         >
           {({ isSubmitting }) => (
-            <Form>
-              <div className="flex gap-2">
+            <Form className="flex flex-col gap-2 p-4">
+              <h1 className="text-2xl font-bold">Sign Up</h1>
+
+              <div className="flex flex-col ">
                 <label htmlFor="fullName">Full Name</label>
-                <Field name="fullName" placeholder="fullName" />
+                <Field
+                  name="fullName"
+                  placeholder="fullName"
+                  className="border border-gray-400 px-2 py-1 rounded-sm"
+                />
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-col ">
                 <label htmlFor="username">Username</label>
-                <Field name="username" placeholder="fullname" />
+                <Field
+                  name="username"
+                  placeholder="fullname"
+                  className="border border-gray-400 px-2 py-1 rounded-sm"
+                />
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-col">
                 <label htmlFor="email">Email</label>
-                <Field name="email" placeholder="jabc@gmail.com" type="email" />
+                <Field
+                  name="email"
+                  placeholder="jabc@gmail.com"
+                  type="email"
+                  className="border border-gray-400 px-2 py-1 rounded-sm"
+                />
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-col">
                 <label htmlFor="password">Password</label>
-                <Field name="password" placeholder="password" type="password" />
+                <Field
+                  name="password"
+                  placeholder="password"
+                  type="password"
+                  className="border border-gray-400 px-2 py-1 rounded-sm"
+                />
               </div>
 
-              <button type="submit" disabled={isSubmitting}>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-green-500 hover:bg-green-600 cursor-pointer text-white rounded-sm px-2 py-1"
+              >
                 Submit
               </button>
+              <div className="text-sm">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="hover:text-blue-500 cursor-pointer"
+                >
+                  Login here
+                </Link>
+              </div>
             </Form>
           )}
         </Formik>
