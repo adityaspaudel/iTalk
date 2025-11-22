@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 
@@ -85,8 +86,6 @@ const UserHome = () => {
     }
   };
 
-  
-
   return (
     <main className="flex bg-amber-200 h-screen w-screen text-black">
       <div>UserHome</div>
@@ -96,8 +95,6 @@ const UserHome = () => {
 
       <div className="flex flex-col items-center justify-start min-h-screen bg-gray-100 p-8 font-sans">
         <div className="bg-white p-6 rounded-xl shadow-2xl max-w-lg w-full">
-        
-
           {/* Search Input and Button */}
           <div className="mb-8 flex space-x-2">
             <input
@@ -144,9 +141,15 @@ const UserHome = () => {
           {/* Display Results */}
           <div className="p-4  rounded-md overflow-x-auto text-sm">
             <pre>
-              {searchResult
-                ? JSON.stringify(searchResult, null, 2)
-                : "Type a name and click Search to query your backend."}
+              {searchResult ? (
+                searchResult.users.map((u, i) => (
+                  <Link key={u._id} href={`/${userId}/${u._id}`}>
+                    <div>{u?.fullName}</div>
+                  </Link>
+                ))
+              ) : (
+                <></>
+              )}
             </pre>
           </div>
         </div>
