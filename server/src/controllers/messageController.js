@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const Message = require("../models/messageModel");
-
+let ioInstance;
+const setMessageSocket = (io) => {
+  ioInstance = io;
+};
 const sendMessage = async (req, res) => {
   try {
     const { sender, receiver, text } = req.body;
@@ -20,12 +23,20 @@ const sendMessage = async (req, res) => {
       });
     }
 
-    chat.messages.push({
+    const newMsg = {
       sender,
       text,
-    });
+      createdAt: new Date(),
+    };
 
+    chat.messages.push(newMsg);
     await chat.save();
+
+    // 🔥 FIXED SOCKET EMIT
+    if (ioInstance) {
+      ioInstance.to(sender).emit("newMessage", newMsg);
+      ioInstance.to(receiver).emit("newMessage", newMsg);
+    }
 
     res.status(200).send({
       message: "Message sent successfully",
@@ -36,6 +47,7 @@ const sendMessage = async (req, res) => {
     res.status(500).send({ message: "Internal Server Error" });
   }
 };
+
 
 const getMessage = async (req, res) => {
   try {
@@ -56,4 +68,4 @@ const getMessage = async (req, res) => {
   }
 };
 
-module.exports = { sendMessage, getMessage };
+module.exports = { sendMessage, getMessage, setMessageSocket };
