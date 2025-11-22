@@ -10,6 +10,12 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
 
+const { setMessageSocket } = require("./controllers/messageController");
+// socket setup
+const http = require("http");
+const { Server } = require("socket.io");
+const server = http.createServer(app);
+
 // swagger api setup
 const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("./swagger-output.json"); // auto-generated file
@@ -37,6 +43,30 @@ process.on("unhandledRejection", (error) => {
   console.log("Unhandled Promise Rejection:", error.message);
 });
 
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credential: true,
+  },
+});
+
+setMessageSocket(io);
+
+// 🔥 socket.on("connection")
+io.on("connection", (socket) => {
+  console.log("⚡ User connected:", socket.id);
+
+  socket.on("join", (userId) => {
+    socket.join(userId);
+    console.log(`👤 User ${userId} joined room`);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+  });
+});
+
 // routes
 app.use(userRoute);
 app.use(messageRoute);
@@ -54,7 +84,7 @@ app.use((req, res) => {
 const port = process.env.port || 8000;
 
 try {
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Application is listening on port ${port}`);
   });
 } catch (error) {
