@@ -39,7 +39,7 @@ const sendMessage = async (req, res) => {
 
 const getMessage = async (req, res) => {
   try {
-    const { sender, receiver } = req.body;
+    const { sender, receiver } = req.params;
 
     if (!sender || !receiver) {
       return res.status(400).send({ message: "All fields are required" });
