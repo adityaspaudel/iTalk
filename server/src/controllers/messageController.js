@@ -6,11 +6,17 @@ const setMessageSocket = (io) => {
 };
 const sendMessage = async (req, res) => {
   try {
-    const { sender, receiver, text } = req.body;
+    let { sender, receiver, text } = req.body;
 
     if (!sender || !receiver || !text) {
       return res.status(400).send({ message: "All fields are required" });
     }
+
+    // FIX: remove accidental double quotes
+    sender = sender.replace(/"/g, "");
+    receiver = receiver.replace(/"/g, "");
+
+    const images = req.files ? req.files.map((file) => file.filename) : [];
 
     let chat = await Message.findOne({
       participants: { $all: [sender, receiver] },
@@ -26,13 +32,13 @@ const sendMessage = async (req, res) => {
     const newMsg = {
       sender,
       text,
+      images,
       createdAt: new Date(),
     };
 
     chat.messages.push(newMsg);
     await chat.save();
 
-    // 🔥 FIXED SOCKET EMIT
     if (ioInstance) {
       ioInstance.to(sender).emit("newMessage", newMsg);
       ioInstance.to(receiver).emit("newMessage", newMsg);
@@ -43,11 +49,10 @@ const sendMessage = async (req, res) => {
       chat,
     });
   } catch (error) {
-    console.error(error);
+    console.error("SEND MESSAGE ERROR:", error);
     res.status(500).send({ message: "Internal Server Error" });
   }
 };
-
 
 const getMessage = async (req, res) => {
   try {
