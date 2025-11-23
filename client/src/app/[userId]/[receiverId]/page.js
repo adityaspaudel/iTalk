@@ -127,7 +127,7 @@ const Receiver = () => {
                       className="h-24 w-24 bg-red-600"
                     />
                   )}
-                  {m.images[0]}
+                  {m?.images[0]}
                 </div>
                 <div className="text-[10px] text-gray-700 mt-1">
                   {new Date(m.createdAt).toLocaleTimeString()}
