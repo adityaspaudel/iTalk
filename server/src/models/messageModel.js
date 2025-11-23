@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const messageSchema = new mongoose.Schema(
   {
     participants: [
@@ -11,14 +12,14 @@ const messageSchema = new mongoose.Schema(
       {
         sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         text: { type: String },
+        images: [{ type: String }], // ✅ MUST ADD THIS
         createdAt: { type: Date, default: Date.now },
       },
     ],
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 const Message = mongoose.model("Message", messageSchema);
+
 module.exports = Message;

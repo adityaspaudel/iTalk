@@ -32,7 +32,7 @@ const UserHome = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [toggleFollowState, setToggleFollowState] = useState([]);
   const handleSearch = async () => {
     const term = searchTerm.trim();
 
@@ -84,6 +84,21 @@ const UserHome = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleFollowUnfollow = async (e, targetUser) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `http://localhost:8000/user/toggleFollowUnfollow`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ followedBy: userId, followingTo: targetUser }),
+        }
+      );
+      const data = await response.json();
+    } catch (error) {}
   };
 
   return (
@@ -140,17 +155,25 @@ const UserHome = () => {
 
           {/* Display Results */}
           <div className="p-4  rounded-md overflow-x-auto text-sm">
-            <pre>
+            <div className="flex flex-col gap-2">
               {searchResult ? (
-                searchResult.users.map((u, i) => (
-                  <Link key={u._id} href={`/${userId}/${u._id}`}>
-                    <div>{u?.fullName}</div>
-                  </Link>
-                ))
+                <div className="flex flex-col justify-between items-center gap-2">
+                  {searchResult.users.map((u, i) => (
+                    <div key={u._id} className="flex gap-4">
+                      <Link href={`/${userId}/${u._id}`}>{u?.fullName}</Link>
+                      <button
+                        onClick={(e) => toggleFollowUnfollow(e, u._id)}
+                        className="bg-green-500 hover:bg-green-600 cursor-pointer"
+                      >
+                        follow/unfollow
+                      </button>
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <></>
               )}
-            </pre>
+            </div>
           </div>
         </div>
       </div>

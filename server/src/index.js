@@ -9,6 +9,8 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const compression = require("compression");
+const path = require("path");
+const fs = require("fs");
 
 const { setMessageSocket } = require("./controllers/messageController");
 // socket setup
@@ -31,6 +33,7 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(compression());
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // database connection
 dbConnect();
 
