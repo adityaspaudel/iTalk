@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
@@ -116,7 +117,18 @@ const Receiver = () => {
                 }
               `}
               >
+                {JSON.stringify(m)}
                 <div className="text-sm">{m.text}</div>
+                <div>
+                  {m.images && m.images[0] && (
+                    <img
+                      alt={m?.images[0]}
+                      src={`http://localhost:8000/uploads/chat/${m?.images[0]}`}
+                      className="h-24 w-24 bg-red-600"
+                    />
+                  )}
+                  {m.images[0]}
+                </div>
                 <div className="text-[10px] text-gray-700 mt-1">
                   {new Date(m.createdAt).toLocaleTimeString()}
                 </div>
