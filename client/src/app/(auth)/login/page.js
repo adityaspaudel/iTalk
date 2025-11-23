@@ -22,7 +22,7 @@ const UserLogin = () => {
             initialValues={formData}
             onSubmit={async (values) => {
               await sleep(500);
-              alert(JSON.stringify(values, null, 2));
+              // alert(JSON.stringify(values, null, 2));
               try {
                 const response = await fetch(
                   `http://localhost:8000/user/userLogin`,
@@ -35,6 +35,7 @@ const UserLogin = () => {
                 const parsedData = await response.json();
                 setFormData(parsedData);
                 console.log("parsedData", parsedData);
+                alert("login successful");
                 router.push(`/${parsedData.user.id}`);
               } catch (error) {
                 console.error(error);
@@ -73,7 +74,9 @@ const UserLogin = () => {
                 </button>
                 <div className="text-sm">
                   Do not have an account?{" "}
-                  <Link href="/register" className="hover:text-blue-500">Register here</Link>
+                  <Link href="/register" className="hover:text-blue-500">
+                    Register here
+                  </Link>
                 </div>
               </Form>
             )}
