@@ -15,7 +15,6 @@ const UserHome = () => {
 			const data = await response.json();
 			setAllUsers(data);
 
-			// Users followed by logged-in user
 			const filteredUsers = data.filter((user) =>
 				user.followers.includes(userId)
 			);
@@ -29,9 +28,9 @@ const UserHome = () => {
 		fetchAllUsers();
 	}, [fetchAllUsers]);
 
-	// -------------------------------------
+	// --------------------------
 	// SEARCH STATES
-	// -------------------------------------
+	// --------------------------
 	const BACKEND_URL = "http://localhost:8000/user/userSearchByName";
 	const [searchTerm, setSearchTerm] = useState("");
 	const [searchResult, setSearchResult] = useState(null);
@@ -73,9 +72,7 @@ const UserHome = () => {
 		}
 	};
 
-	// -------------------------------------
-	// FOLLOW/UNFOLLOW
-	// -------------------------------------
+	// FOLLOW / UNFOLLOW
 	const toggleFollowUnfollow = async (e, targetUser) => {
 		e.preventDefault();
 
@@ -86,7 +83,6 @@ const UserHome = () => {
 				body: JSON.stringify({ followedBy: userId, followingTo: targetUser }),
 			});
 
-			// Refresh the lists so UI updates instantly
 			fetchAllUsers();
 			if (searchResult) handleSearch();
 		} catch (error) {
@@ -95,13 +91,18 @@ const UserHome = () => {
 	};
 
 	return (
-		<main className="flex bg-amber-200 min-h-screen w-screen text-black content-center items-center">
-			<div className="flex flex-col items-center justify-start min-h-screen bg-gray-100 p-8 font-sans">
-				<div className="bg-white p-6 rounded-xl shadow-2xl max-w-lg w-full">
+		<main className="flex min-h-screen w-screen bg-gradient-to-br from-amber-100 to-amber-300 text-black justify-center items-start p-6">
+			<div className="flex flex-col items-center max-w-3xl w-full gap-8">
+				{/* SEARCH CARD */}
+				<div className="bg-white p-6 rounded-2xl shadow-xl w-full">
+					<h2 className="text-xl font-semibold mb-4 text-gray-700">
+						Search Users
+					</h2>
+
 					{/* SEARCH BAR */}
-					<div className="mb-8 flex space-x-2">
+					<div className="mb-6 flex space-x-2">
 						<input
-							className="grow px-2 py-1 border border-gray-300 rounded-lg"
+							className="grow px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200 outline-none"
 							type="text"
 							placeholder="Search user by full name"
 							value={searchTerm}
@@ -112,35 +113,46 @@ const UserHome = () => {
 						<button
 							onClick={handleSearch}
 							disabled={isLoading}
-							className={`rounded-sm px-3 py-1 cursor-pointer text-white ${
-								isLoading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+							className={`rounded-md px-4 py-2 text-white transition ${
+								isLoading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
 							}`}
 						>
 							{isLoading ? "Searching..." : "Search"}
 						</button>
 					</div>
 
-					{/* ERROR */}
+					{/* ERROR BOX */}
 					{error && (
-						<div className="p-3 bg-red-200 text-red-800 rounded">{error}</div>
+						<div className="p-3 bg-red-100 text-red-700 border border-red-300 rounded-md mb-3">
+							{error}
+						</div>
 					)}
 
 					{/* SEARCH RESULTS */}
-					<div className="p-2 rounded-md text-sm">
+					<div className="p-3 rounded-md text-sm">
 						{searchResult?.users && (
 							<div className="flex flex-col gap-3">
 								{searchResult.users.map((u) => (
 									<div
 										key={u._id}
-										className="flex justify-between items-center"
+										className="flex justify-between items-center p-3 bg-gray-100 rounded-lg shadow-sm"
 									>
-										<Link href={`/${userId}/${u._id}`}>{u.fullName}</Link>
+										<Link
+											className="text-blue-600 font-semibold"
+											href={`/${userId}/${u._id}`}
+										>
+											{u.fullName}
+										</Link>
 
 										<button
 											onClick={(e) => toggleFollowUnfollow(e, u._id)}
-											className="bg-green-500 hover:bg-green-600 cursor-pointer px-2 py-1 text-white rounded"
+											className={`px-3 py-1 rounded-lg text-white transition ${
+												followingList.some((f) => f._id === u._id)
+													? "bg-red-500 hover:bg-red-600"
+													: "bg-green-600 hover:bg-green-700"
+											}`}
 										>
-											{followingList?.some((f) => f._id === u._id)
+											{followingList.some((f) => f._id === u._id)
 												? "Unfollow"
 												: "Follow"}
 										</button>
@@ -149,31 +161,75 @@ const UserHome = () => {
 							</div>
 						)}
 
-						{/* NO RESULT MESSAGE */}
 						{searchResult?.message && (
 							<div className="text-gray-700">{searchResult.message}</div>
 						)}
 					</div>
 				</div>
+				{followingList.length > 0 && (
+					<div className="flex flex-col gap-3 bg-white p-6 rounded-2xl shadow-xl w-full">
+						<h2 className="text-xl font-semibold text-gray-700 mb-2">
+							Following
+						</h2>
 
-				{/* ALL USERS LIST */}
-				{allUsers.length > 0 && (
-					<div className="flex flex-col gap-2 items-center bg-amber-300 p-2 mt-6 w-96">
-						{allUsers.map((user) => (
+						{followingList.map((user) => (
 							<div
 								key={user._id}
-								className="flex justify-between items-center w-full p-4 bg-gray-200"
+								className="flex justify-between items-center p-4 bg-gray-100 rounded-xl shadow-sm"
 							>
-								<div>
-									<div>{user.fullName}</div>
-									<div>{user.username}</div>
-								</div>
+								<Link href={`/${userId}/${user._id}`}>
+									<div>
+										<div className="font-semibold text-gray-800">
+											{user.fullName}
+										</div>
+										<div className="text-gray-600 text-sm">
+											@{user.username}
+										</div>
+									</div>
+								</Link>
 
 								<button
 									onClick={(e) => toggleFollowUnfollow(e, user._id)}
-									className="bg-green-500 hover:bg-green-600 cursor-pointer px-2 py-1 text-white rounded"
+									className="px-3 py-1 rounded-lg text-white bg-red-500 hover:bg-red-600 transition"
 								>
-									{followingList?.some((f) => f._id === user._id)
+									Unfollow
+								</button>
+							</div>
+						))}
+					</div>
+				)}{" "}
+				{/* ALL USERS LIST */}
+				{allUsers.length > 0 && (
+					<div className="flex flex-col gap-3 bg-white p-6 rounded-2xl shadow-xl w-full">
+						<h2 className="text-xl font-semibold text-gray-700 mb-2">
+							All Users
+						</h2>
+
+						{allUsers.map((user) => (
+							<div
+								key={user._id}
+								className="flex justify-between items-center p-4 bg-gray-100 rounded-xl shadow-sm"
+							>
+								<Link href={``}>
+									<div>
+										<div className="font-semibold text-gray-800">
+											{user.fullName}
+										</div>
+										<div className="text-gray-600 text-sm">
+											@{user.username}
+										</div>
+									</div>
+								</Link>
+
+								<button
+									onClick={(e) => toggleFollowUnfollow(e, user._id)}
+									className={`px-3 py-1 rounded-lg text-white transition ${
+										followingList.some((f) => f._id === user._id)
+											? "bg-red-500 hover:bg-red-600"
+											: "bg-green-600 hover:bg-green-700"
+									}`}
+								>
+									{followingList.some((f) => f._id === user._id)
 										? "Unfollow"
 										: "Follow"}
 								</button>
@@ -182,9 +238,6 @@ const UserHome = () => {
 					</div>
 				)}
 			</div>
-
-			{/* DEBUG */}
-			<pre>{JSON.stringify(followingList, null, 2)}</pre>
 		</main>
 	);
 };
