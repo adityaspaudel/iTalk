@@ -39,57 +39,59 @@ dbConnect();
 
 // Catch unhandled errors
 process.on("uncaughtException", (error) => {
-  console.log("Uncaught Exception:", error);
+	console.log("Uncaught Exception:", error);
 });
 
 process.on("unhandledRejection", (error) => {
-  console.log("Unhandled Promise Rejection:", error.message);
+	console.log("Unhandled Promise Rejection:", error.message);
 });
 
 const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credential: true,
-  },
+	cors: {
+		origin: "http://localhost:3000",
+		methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+		credential: true,
+	},
 });
 
 setMessageSocket(io);
 
 // 🔥 socket.on("connection")
 io.on("connection", (socket) => {
-  console.log("⚡ User connected:", socket.id);
+	console.log("⚡ User connected:", socket.id);
 
-  socket.on("join", (userId) => {
-    socket.join(userId);
-    console.log(`👤 User ${userId} joined room`);
-  });
+	socket.on("join", (userId) => {
+		socket.join(userId);
+		console.log(`👤 User ${userId} joined room`);
+	});
 
-  socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
-  });
+	socket.on("disconnect", () => {
+		console.log("❌ User disconnected:", socket.id);
+	});
 });
 
 // routes
 app.use(userRoute);
 app.use(messageRoute);
-
+app.use("/", (req, res) => {
+	res.send({ message: "app is running" });
+});
 // swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 //  Catch undefined routes
 app.use((req, res) => {
-  console.error("Routing error:", req.originalUrl);
-  res.status(500).json({ message: "Routing error" });
+	console.error("Routing error:", req.originalUrl);
+	res.status(500).json({ message: "Routing error" });
 });
 
 // app
 const port = process.env.port || 8000;
 
 try {
-  server.listen(port, () => {
-    console.log(`Application is listening on port ${port}`);
-  });
+	server.listen(port, () => {
+		console.log(`Application is listening on port ${port}`);
+	});
 } catch (error) {
-  console.log("Server startup error:", error);
+	console.log("Server startup error:", error);
 }
