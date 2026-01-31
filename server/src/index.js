@@ -1,3 +1,11 @@
+// process level error handling
+process.on("unhandledRejection", (error) => {
+	res.send({ message: `unhandled rejection: ${error}` });
+});
+
+process.on("uncaughtRejection", (error) => {
+	res.send({ message: `uncaught exception: ${error}` });
+});
 const express = require("express");
 const app = express();
 const dbConnect = require("./db/connection");
@@ -37,15 +45,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // database connection
 dbConnect();
 
-// Catch unhandled errors
-process.on("uncaughtException", (error) => {
-	console.log("Uncaught Exception:", error);
-});
-
-process.on("unhandledRejection", (error) => {
-	console.log("Unhandled Promise Rejection:", error.message);
-});
-
 const io = new Server(server, {
 	cors: {
 		origin: "http://localhost:3000",
@@ -75,6 +74,16 @@ app.use(userRoute);
 app.use(messageRoute);
 app.use("/", (req, res) => {
 	res.send({ message: "app is running" });
+});
+
+// routing error
+app.use((err, req, res, next) => {
+	res.send({ message: `route not found, ${req.originalUrl}` });
+});
+
+// global error
+app.use((err, req, res, next) => {
+	res.send({ message: `global error ${error}` });
 });
 // swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
