@@ -5,24 +5,24 @@ import React, { useCallback, useEffect, useState } from "react";
 
 const UserHome = () => {
 	const { userId } = useParams();
-
+	const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
 	const [allUsers, setAllUsers] = useState([]);
 	const [followingList, setFollowingList] = useState([]);
 
 	const fetchAllUsers = useCallback(async () => {
 		try {
-			const response = await fetch(`http://localhost:8000/user/fetchAllUsers`);
+			const response = await fetch(`${NEXT_PUBLIC_API_URL}/user/fetchAllUsers`);
 			const data = await response.json();
 			setAllUsers(data);
 
 			const filteredUsers = data.filter((user) =>
-				user.followers.includes(userId)
+				user.followers.includes(userId),
 			);
 			setFollowingList(filteredUsers);
 		} catch (error) {
 			console.error(error);
 		}
-	}, [userId]);
+	}, [userId, NEXT_PUBLIC_API_URL]);
 
 	useEffect(() => {
 		fetchAllUsers();
@@ -31,7 +31,7 @@ const UserHome = () => {
 	// --------------------------
 	// SEARCH STATES
 	// --------------------------
-	const BACKEND_URL = "http://localhost:8000/user/userSearchByName";
+	const BACKEND_URL = `${NEXT_PUBLIC_API_URL}/user/userSearchByName`;
 	const [searchTerm, setSearchTerm] = useState("");
 	const [searchResult, setSearchResult] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +49,7 @@ const UserHome = () => {
 
 		try {
 			const response = await fetch(
-				`${BACKEND_URL}?fullName=${encodeURIComponent(term)}`
+				`${BACKEND_URL}?fullName=${encodeURIComponent(term)}`,
 			);
 			const data = await response.json();
 
@@ -77,7 +77,7 @@ const UserHome = () => {
 		e.preventDefault();
 
 		try {
-			await fetch(`http://localhost:8000/user/toggleFollowUnfollow`, {
+			await fetch(`${NEXT_PUBLIC_API_URL}/user/toggleFollowUnfollow`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ followedBy: userId, followingTo: targetUser }),
